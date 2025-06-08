@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cafés to Take Kulli ☕💞</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #e0f7fa);
+      color: #333;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    li {
+      background: #fff;
+      margin: 10px 0;
+      padding: 12px 15px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    li:hover {
+      transform: scale(1.02);
+    }
+    input[type="checkbox"] {
+      margin-right: 12px;
+      transform: scale(1.2);
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      color: #777;
+    }
+    .heart {
+      color: hotpink;
+      animation: beat 1s infinite;
+    }
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    #new-item {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+    #new-item input {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    #new-item button {
+      margin-left: 10px;
+      padding: 0.5rem 1rem;
+      background: hotpink;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>☕ Cafés to Take Kulli 💞</h1>
+  <div id="new-item">
+    <input type="text" id="cafeInput" placeholder="Add new cafe...">
+    <button onclick="addCafe()">Add</button>
+  </div>
+  <ul id="cafeList"></ul>
+
+  <footer>Made with <span class="heart">❤️</span></footer>
+
+  <script>
+    const list = document.getElementById('cafeList');
+
+    function getCafes() {
+      return JSON.parse(localStorage.getItem('cafes') || '[]');
+    }
+
+    function saveCafes(cafes) {
+      localStorage.setItem('cafes', JSON.stringify(cafes));
+    }
+
+    function renderCafes() {
+      list.innerHTML = '';
+      getCafes().forEach(cafe => addCafeItem(cafe.name, cafe.checked));
+    }
+
+    function addCafeItem(name, checked = false) {
+      const li = document.createElement('li');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = checked;
+      const label = document.createElement('span');
+      label.textContent = name;
+      label.style.flex = '1';
+      const link = document.createElement('a');
+      link.href = `https://www.google.com/maps/search/${encodeURIComponent(name + ' cafe')}`;
+      link.target = '_blank';
+      link.textContent = '🗺️';
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      li.appendChild(link);
+      list.appendChild(li);
+
+      checkbox.addEventListener('change', () => {
+        const cafes = getCafes().map(c =>
+          c.name === name ? { ...c, checked: checkbox.checked } : c
+        );
+        saveCafes(cafes);
+      });
+    }
+
+    function addCafe() {
+      const input = document.getElementById('cafeInput');
+      const name = input.value.trim();
+      if (name) {
+        const cafes = getCafes();
+        cafes.push({ name, checked: false });
+        saveCafes(cafes);
+        renderCafes();
+        input.value = '';
+      }
+    }
+
+    if (!localStorage.getItem('cafes')) {
+      const defaultCafes = [
+        "Sihi", "Leaven", "Bella Italiano", "Tao Bao", "Swadeshi", "Jini’s", "Sorrento",
+        "Malgudi Coffee Shop", "Minimal", "Pizzaiolo", "Atmosphere", "Sutra Bistro",
+        "Zlash", "Starbucks", "Folki", "Firangi Grubs", "Brioche Dorée", "Sapa",
+        "White Teak", "Mile High Roasters", "Vui Coffee", "Hideaway", "BigCup",
+        "Tusk", "Iconic", "Bonsai Cafe"
+      ].map(name => ({ name, checked: false }));
+      saveCafes(defaultCafes);
+    }
+
+    renderCafes();
+  </script>
+</body>
+</html>
